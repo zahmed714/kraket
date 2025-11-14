@@ -24,7 +24,7 @@ client.on('ready', async () => {
 
   // Fetch the channel again after the bot is ready
   const channel = await guild.channels.fetch(VOICE_CHANNEL_ID).catch(console.error);
-  if (!channel || (channel.type !== 2 && channel.type !== ChannelType.GuildVoice)) { // Check for both old and new channel types
+  if (!channel || channel.type !== 2) { // Check for voice channel type
     console.error('Voice channel not found or not voice');
     return;
   }
