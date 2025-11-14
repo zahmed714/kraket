@@ -1,8 +1,7 @@
-const { Client } = require('discord.js-selfbot-v13');
+const { Client, GatewayIntentBits, ChannelType } = require('discord.js-selfbot-v13');
 const { joinVoiceChannel } = require('@discordjs/voice');
 const express = require('express');
 const app = express();
-
 
 const TOKEN = process.env.BOT_TOKEN;      // from Render env
 const GUILD_ID = '1210305827148144701';
@@ -37,7 +36,7 @@ client.on('ready', async () => {
 
   console.log(`Fetched channel: ${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
 
-  if (channel.type !== 2) { // Check for voice channel type
+  if (channel.type !== ChannelType.GuildVoice) { // Check for voice channel type using ChannelType.GuildVoice
     console.error('Channel is not a voice channel');
     return;
   }
