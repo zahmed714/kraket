@@ -7,9 +7,13 @@ const TOKEN = process.env.BOT_TOKEN;      // from Render env
 const GUILD_ID = '1210305827148144701';
 const VOICE_CHANNEL_ID = '1417545211109834885';
 
-const client = new Client({
-  checkUpdate: false,
-  readyStatus: false
+// Express server (keep the port thing)
+const PORT = process.env.PORT || 3000;
+app.get('/', (req, res) => {
+  res.send('Bot is running.');
+});
+app.listen(PORT, () => {
+  console.log(`Express server listening on port ${PORT}`);
 });
 
 client.on('ready', async () => {
@@ -21,12 +25,14 @@ client.on('ready', async () => {
     return;
   }
 
+  // Log all channels in the guild
   console.log('Available channels in the guild:');
   guild.channels.cache.forEach(channel => {
     console.log(`${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
   });
 
-  const channel = await guild.channels.fetch(VOICE_CHANNEL_ID).catch(console.error);
+  // Get the voice channel
+  const channel = guild.channels.cache.get(VOICE_CHANNEL_ID);
   if (!channel) {
     console.error('Voice channel not found');
     return;
@@ -34,19 +40,18 @@ client.on('ready', async () => {
 
   console.log(`Fetched channel: ${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
 
-  // v13/selfbot: type is a string like "GUILD_VOICE"
-  if (channel.type !== 'GUILD_VOICE') {
-    console.error('Channel is not a voice channel');
+  // In discord.js-selfbot-v13, type is a STRING like 'GUILD_VOICE'
+  if (channel.type !== 'GUILD_VOICE' && channel.type !== 'GUILD_STAGE_VOICE') {
+    console.error('Channel is not a voice / stage voice channel');
     return;
   }
 
   try {
-    const connection = joinVoiceChannel({
-      channelId: VOICE_CHANNEL_ID,
-      guildId: GUILD_ID,
-      adapterCreator: guild.voiceAdapterCreator,
-      selfMute: false,
-      selfDeaf: false
+    // Use the selfbot voice API you posted docs for
+    const connection = await client.voice.joinChannel(channel);
+
+    connection.on('ready', () => {
+      console.log('Voice connection is ready.');
     });
 
     connection.on('error', error => {
@@ -61,6 +66,15 @@ client.on('ready', async () => {
   } catch (error) {
     console.error('Error joining voice channel:', error);
   }
+});
+
+// Optional: catch global errors so Render doesn’t just crash with “Unhandled error event”
+client.on('error', err => {
+  console.error('Client error:', err);
+});
+
+process.on('unhandledRejection', err => {
+  console.error('Unhandled promise rejection:', err);
 });
 
 client.login(TOKEN);
