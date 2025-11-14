@@ -22,8 +22,14 @@ client.on('ready', async () => {
     return;
   }
 
+  // Log all channels in the guild
+  console.log('Available channels in the guild:');
+  guild.channels.cache.forEach(channel => {
+    console.log(`${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
+  });
+
   const channel = guild.channels.cache.get(VOICE_CHANNEL_ID);
-  if (!channel || channel.type !== 2) { // 2 = GUILD_VOICE in older discord.js; use ChannelType.GuildVoice in v14+
+  if (!channel || (channel.type !== 2 && channel.type !== ChannelType.GuildVoice)) { // Check for both old and new channel types
     console.error('Voice channel not found or not voice');
     return;
   }
