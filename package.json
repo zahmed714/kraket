@@ -1,15 +1,15 @@
 {
   "name": "vc-stay-bot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "twomad.js",              // or "index.js" if you renamed the file
   "engines": {
-    "node": "18.x"
+    "node": "20.x"                  // <--- bump to 20.x
   },
   "scripts": {
-    "start": "node twomad.js"
+    "start": "node twomad.js"       // or "node index.js"
   },
   "dependencies": {
-    "discord.js-selfbot-v13": "^2.14.0",
+    "discord.js-selfbot-v13": "^3.7.1",  // <--- bump to latest
     "@discordjs/voice": "^0.17.0"
   }
 }
