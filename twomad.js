@@ -22,20 +22,21 @@ client.on('ready', async () => {
     return;
   }
 
-  // Log all channels in the guild
-  console.log('Available channels in the guild:');
-  guild.channels.cache.forEach(channel => {
-    console.log(`${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
-  });
-
-  const channel = guild.channels.cache.get(VOICE_CHANNEL_ID);
+  // Fetch the channel again after the bot is ready
+  const channel = await guild.channels.fetch(VOICE_CHANNEL_ID).catch(console.error);
   if (!channel || (channel.type !== 2 && channel.type !== ChannelType.GuildVoice)) { // Check for both old and new channel types
     console.error('Voice channel not found or not voice');
     return;
   }
 
   try {
-    await channel.join();
+    await joinVoiceChannel({
+      channelId: VOICE_CHANNEL_ID,
+      guildId: GUILD_ID,
+      adapterCreator: guild.voiceAdapterCreator,
+      selfMute: false,
+      selfDeaf: false
+    });
     console.log('Joined VC and staying there.');
   } catch (error) {
     console.error('Error joining voice channel:', error);
