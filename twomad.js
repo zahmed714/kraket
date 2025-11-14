@@ -55,8 +55,14 @@ client.on('ready', async () => {
   }
 
   try {
-    // Use selfbot's built-in voice system (what you pasted docs for)
-    const connection = await client.voice.joinChannel(channel);
+    console.log('client.voice object:', client.voice);
+
+    // Use selfbot's built-in voice system (per docs / examples)
+    const connection = await client.voice.joinChannel(channel, {
+      selfMute: false,
+      selfDeaf: false,
+      selfVideo: false,
+    });
 
     connection.on('ready', () => {
       console.log('Voice connection is ready.');
