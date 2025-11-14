@@ -6,7 +6,7 @@
     "node": "18.x"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node twomad.js"
   },
   "dependencies": {
     "discord.js-selfbot-v13": "^2.14.0",
