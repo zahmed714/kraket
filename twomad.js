@@ -22,10 +22,23 @@ client.on('ready', async () => {
     return;
   }
 
+  // Log all channels in the guild
+  console.log('Available channels in the guild:');
+  guild.channels.cache.forEach(channel => {
+    console.log(`${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
+  });
+
   // Fetch the channel again after the bot is ready
   const channel = await guild.channels.fetch(VOICE_CHANNEL_ID).catch(console.error);
-  if (!channel || channel.type !== 2) { // Check for voice channel type
-    console.error('Voice channel not found or not voice');
+  if (!channel) {
+    console.error('Voice channel not found');
+    return;
+  }
+
+  console.log(`Fetched channel: ${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
+
+  if (channel.type !== 2) { // Check for voice channel type
+    console.error('Channel is not a voice channel');
     return;
   }
 
