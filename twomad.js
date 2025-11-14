@@ -1,21 +1,29 @@
-const { Client, GatewayIntentBits } = require('discord.js-selfbot-v13');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { Client } = require('discord.js-selfbot-v13');
 const express = require('express');
-const app = express();
 
 const TOKEN = process.env.BOT_TOKEN;      // from Render env
 const GUILD_ID = '1210305827148144701';
 const VOICE_CHANNEL_ID = '1417545211109834885';
 
-// Express server (keep the port thing)
+// ---- CREATE CLIENT FIRST ----
+const client = new Client({
+  checkUpdate: false,
+  readyStatus: false
+});
+
+// ---- EXPRESS SERVER (KEEPING PORT THING) ----
+const app = express();
 const PORT = process.env.PORT || 3000;
+
 app.get('/', (req, res) => {
   res.send('Bot is running.');
 });
+
 app.listen(PORT, () => {
   console.log(`Express server listening on port ${PORT}`);
 });
 
+// ---- DISCORD READY HANDLER ----
 client.on('ready', async () => {
   console.log(`[READY] Logged in as ${client.user.username}#${client.user.discriminator}`);
 
@@ -31,7 +39,7 @@ client.on('ready', async () => {
     console.log(`${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
   });
 
-  // Get the voice channel
+  // Get the voice channel from cache
   const channel = guild.channels.cache.get(VOICE_CHANNEL_ID);
   if (!channel) {
     console.error('Voice channel not found');
@@ -47,7 +55,7 @@ client.on('ready', async () => {
   }
 
   try {
-    // Use the selfbot voice API you posted docs for
+    // Use selfbot's built-in voice system (what you pasted docs for)
     const connection = await client.voice.joinChannel(channel);
 
     connection.on('ready', () => {
@@ -68,7 +76,7 @@ client.on('ready', async () => {
   }
 });
 
-// Optional: catch global errors so Render doesn’t just crash with “Unhandled error event”
+// ---- ERROR HANDLERS (SO RENDER DOESN'T DIE SILENTLY) ----
 client.on('error', err => {
   console.error('Client error:', err);
 });
@@ -77,4 +85,5 @@ process.on('unhandledRejection', err => {
   console.error('Unhandled promise rejection:', err);
 });
 
+// ---- LOGIN ----
 client.login(TOKEN);
