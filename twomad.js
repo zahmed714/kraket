@@ -43,13 +43,22 @@ client.on('ready', async () => {
   }
 
   try {
-    await joinVoiceChannel({
+    const connection = joinVoiceChannel({
       channelId: VOICE_CHANNEL_ID,
       guildId: GUILD_ID,
       adapterCreator: guild.voiceAdapterCreator,
       selfMute: false,
       selfDeaf: false
     });
+
+    connection.on('error', error => {
+      console.error('Error in voice connection:', error);
+    });
+
+    connection.on('disconnect', () => {
+      console.log('Disconnected from voice channel');
+    });
+
     console.log('Joined VC and staying there.');
   } catch (error) {
     console.error('Error joining voice channel:', error);
