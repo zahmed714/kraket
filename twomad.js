@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ChannelType } = require('discord.js-selfbot-v13');
+const { Client, GatewayIntentBits } = require('discord.js-selfbot-v13');
 const { joinVoiceChannel } = require('@discordjs/voice');
 const express = require('express');
 const app = express();
@@ -21,13 +21,11 @@ client.on('ready', async () => {
     return;
   }
 
-  // Log all channels in the guild
   console.log('Available channels in the guild:');
   guild.channels.cache.forEach(channel => {
     console.log(`${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
   });
 
-  // Fetch the channel again after the bot is ready
   const channel = await guild.channels.fetch(VOICE_CHANNEL_ID).catch(console.error);
   if (!channel) {
     console.error('Voice channel not found');
@@ -36,7 +34,8 @@ client.on('ready', async () => {
 
   console.log(`Fetched channel: ${channel.name} (ID: ${channel.id}, Type: ${channel.type})`);
 
-  if (channel.type !== ChannelType.GuildVoice) { // Check for voice channel type using ChannelType.GuildVoice
+  // v13/selfbot: type is a string like "GUILD_VOICE"
+  if (channel.type !== 'GUILD_VOICE') {
     console.error('Channel is not a voice channel');
     return;
   }
@@ -62,16 +61,6 @@ client.on('ready', async () => {
   } catch (error) {
     console.error('Error joining voice channel:', error);
   }
-});
-
-// Start Express server
-const PORT = process.env.PORT || 3000;
-app.get('/', (req, res) => {
-  res.send('Bot is running.');
-});
-
-app.listen(PORT, () => {
-  console.log(`Express server listening on port ${PORT}`);
 });
 
 client.login(TOKEN);
